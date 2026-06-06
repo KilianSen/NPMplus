@@ -4,7 +4,17 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import type { DeadHost } from "src/api/backend";
 import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
+import {
+	Button,
+	CertificateFormatter,
+	HasPermission,
+	HostActionsDropdown,
+	LoadingPage,
+	makeGroupedTreeView,
+	StatusFormatter,
+	useDataView,
+	type ViewDefinition,
+} from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeadHostModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
@@ -67,7 +77,35 @@ export default function TableWrapper() {
 		),
 	};
 
-	const { controls, content } = useDataView({ screenKey: "dead-hosts", data: rows, views: [flatView] });
+	const groupedView = makeGroupedTreeView<DeadHost>({
+		getDomains: (h) => h.domainNames,
+		getCreatedOn: (h) => h.createdOn,
+		getRowKey: (h) => h.id,
+		renderDetail: (h) => (
+			<div className="d-flex flex-wrap align-items-center gap-2">
+				<CertificateFormatter certificate={h.certificate} />
+				<StatusFormatter enabled={h.enabled} nginxOnline={h.meta.nginxOnline} nginxErr={h.meta.nginxErr} />
+			</div>
+		),
+		renderActions: (h) => (
+			<HostActionsDropdown
+				object="dead-host"
+				id={h.id}
+				enabled={h.enabled}
+				permissionSection={DEAD_HOSTS}
+				onEdit={handleEdit}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+			/>
+		),
+		color: "red",
+	});
+
+	const { controls, content } = useDataView({
+		screenKey: "dead-hosts",
+		data: rows,
+		views: [flatView, groupedView],
+	});
 
 	if (isLoading) {
 		return <LoadingPage />;

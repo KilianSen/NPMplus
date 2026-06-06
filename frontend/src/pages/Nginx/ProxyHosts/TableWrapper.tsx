@@ -4,7 +4,17 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import type { ProxyHost } from "src/api/backend";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
+import {
+	Button,
+	CertificateFormatter,
+	HasPermission,
+	HostActionsDropdown,
+	LoadingPage,
+	makeGroupedTreeView,
+	StatusFormatter,
+	useDataView,
+	type ViewDefinition,
+} from "src/components";
 import { useProxyHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
@@ -86,7 +96,42 @@ export default function TableWrapper() {
 		),
 	};
 
-	const { controls, content } = useDataView({ screenKey: "proxy-hosts", data: rows, views: [flatView] });
+	const groupedView = makeGroupedTreeView<ProxyHost>({
+		getDomains: (h) => h.domainNames,
+		getCreatedOn: (h) => h.createdOn,
+		getRowKey: (h) => h.id,
+		renderDetail: (h) => {
+			const url = `${h.forwardScheme}://${h.forwardHost}${h.forwardPort ? `:${h.forwardPort}` : ""}`;
+			return (
+				<div className="d-flex flex-wrap align-items-center gap-2">
+					<a href={url} target="_blank" rel="noopener">
+						{url}
+					</a>
+					<CertificateFormatter certificate={h.certificate} />
+					<StatusFormatter enabled={h.enabled} nginxOnline={h.meta.nginxOnline} nginxErr={h.meta.nginxErr} />
+				</div>
+			);
+		},
+		renderActions: (h) => (
+			<HostActionsDropdown
+				object="proxy-host"
+				id={h.id}
+				enabled={h.enabled}
+				permissionSection={PROXY_HOSTS}
+				onEdit={handleEdit}
+				onClone={handleClone}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+			/>
+		),
+		color: "lime",
+	});
+
+	const { controls, content } = useDataView({
+		screenKey: "proxy-hosts",
+		data: rows,
+		views: [flatView, groupedView],
+	});
 
 	if (isLoading) {
 		return <LoadingPage />;

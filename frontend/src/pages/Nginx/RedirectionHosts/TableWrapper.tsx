@@ -4,7 +4,17 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import type { RedirectionHost } from "src/api/backend";
 import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
+import {
+	Button,
+	CertificateFormatter,
+	HasPermission,
+	HostActionsDropdown,
+	LoadingPage,
+	makeGroupedTreeView,
+	StatusFormatter,
+	useDataView,
+	type ViewDefinition,
+} from "src/components";
 import { useRedirectionHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal } from "src/modals";
@@ -70,7 +80,39 @@ export default function TableWrapper() {
 		),
 	};
 
-	const { controls, content } = useDataView({ screenKey: "redirection-hosts", data: rows, views: [flatView] });
+	const groupedView = makeGroupedTreeView<RedirectionHost>({
+		getDomains: (h) => h.domainNames,
+		getCreatedOn: (h) => h.createdOn,
+		getRowKey: (h) => h.id,
+		renderDetail: (h) => (
+			<div className="d-flex flex-wrap align-items-center gap-2">
+				<span className="badge bg-secondary-lt">{h.forwardHttpCode}</span>
+				<span>
+					{h.forwardScheme}://{h.forwardDomainName}
+				</span>
+				<CertificateFormatter certificate={h.certificate} />
+				<StatusFormatter enabled={h.enabled} nginxOnline={h.meta.nginxOnline} nginxErr={h.meta.nginxErr} />
+			</div>
+		),
+		renderActions: (h) => (
+			<HostActionsDropdown
+				object="redirection-host"
+				id={h.id}
+				enabled={h.enabled}
+				permissionSection={REDIRECTION_HOSTS}
+				onEdit={handleEdit}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+			/>
+		),
+		color: "yellow",
+	});
+
+	const { controls, content } = useDataView({
+		screenKey: "redirection-hosts",
+		data: rows,
+		views: [flatView, groupedView],
+	});
 
 	if (isLoading) {
 		return <LoadingPage />;

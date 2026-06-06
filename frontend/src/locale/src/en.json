@@ -455,6 +455,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "Fork me on Github"
 	},
+	"group.host-count": {
+		"defaultMessage": "{count, plural, one {# host} other {# hosts}}"
+	},
 	"help": {
 		"defaultMessage": "Help"
 	},
@@ -872,8 +875,17 @@
 	"users": {
 		"defaultMessage": "Users"
 	},
+	"view.expand-all": {
+		"defaultMessage": "All"
+	},
+	"view.expand-depth": {
+		"defaultMessage": "Expand depth"
+	},
 	"view.flat": {
 		"defaultMessage": "Flat list"
+	},
+	"view.grouped": {
+		"defaultMessage": "Grouped by domain"
 	},
 	"view.label": {
 		"defaultMessage": "View"
