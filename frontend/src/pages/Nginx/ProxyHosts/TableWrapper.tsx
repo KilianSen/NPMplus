@@ -1,9 +1,10 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconList, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import type { ProxyHost } from "src/api/backend";
 import { deleteProxyHost, toggleProxyHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
 import { useProxyHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showProxyHostModal } from "src/modals";
@@ -16,14 +17,6 @@ export default function TableWrapper() {
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useProxyHosts(["owner", "access_lists", "certificate"]);
 
-	if (isLoading) {
-		return <LoadingPage />;
-	}
-
-	if (isError) {
-		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
-	}
-
 	const handleDelete = async (id: number) => {
 		await deleteProxyHost(id);
 		showObjectSuccess("proxy-host", "deleted");
@@ -34,6 +27,30 @@ export default function TableWrapper() {
 		queryClient.invalidateQueries({ queryKey: ["proxy-hosts"] });
 		queryClient.invalidateQueries({ queryKey: ["proxy-host", id] });
 		showObjectSuccess("proxy-host", enabled ? "enabled" : "disabled");
+	};
+
+	const handleEdit = (id: number) => showProxyHostModal(id);
+	const handleClone = (id: number) => showProxyHostModal(id, true);
+	const handleDeleteConfirm = (id: number) => {
+		const host = data?.find((h) => h.id === id);
+		showDeleteConfirmModal({
+			title: <T id="object.delete" tData={{ object: "proxy-host" }} />,
+			onConfirm: () => handleDelete(id),
+			invalidations: [["proxy-hosts"], ["proxy-host", id]],
+			children: (
+				<>
+					<T id="object.delete.content" tData={{ object: "proxy-host" }} />
+					{host?.domainNames?.length ? (
+						<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
+					) : null}
+					{host?.forwardHost ? (
+						<div className="mt-1 text-muted small">
+							({host.forwardScheme}://{host.forwardHost}:{host.forwardPort})
+						</div>
+					) : null}
+				</>
+			),
+		});
 	};
 
 	let filtered = null;
@@ -49,6 +66,36 @@ export default function TableWrapper() {
 		setSearch("");
 	}
 
+	const rows = filtered ?? data ?? [];
+
+	const flatView: ViewDefinition<ProxyHost> = {
+		id: "flat",
+		label: "view.flat",
+		icon: <IconList size={18} />,
+		render: ({ data }) => (
+			<Table
+				data={data}
+				isFiltered={!!search}
+				isFetching={isFetching}
+				onEdit={handleEdit}
+				onClone={handleClone}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+				onNew={() => showProxyHostModal("new")}
+			/>
+		),
+	};
+
+	const { controls, content } = useDataView({ screenKey: "proxy-hosts", data: rows, views: [flatView] });
+
+	if (isLoading) {
+		return <LoadingPage />;
+	}
+
+	if (isError) {
+		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
+	}
+
 	return (
 		<div className="card mt-4">
 			<div className="card-status-top bg-lime" />
@@ -62,6 +109,7 @@ export default function TableWrapper() {
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? controls : null}
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -94,36 +142,7 @@ export default function TableWrapper() {
 						</div>
 					</div>
 				</div>
-				<Table
-					data={filtered ?? data ?? []}
-					isFiltered={!!search}
-					isFetching={isFetching}
-					onEdit={(id: number) => showProxyHostModal(id)}
-					onClone={(id: number) => showProxyHostModal(id, true)}
-					onDelete={(id: number) => {
-						const host = data?.find((h) => h.id === id);
-						showDeleteConfirmModal({
-							title: <T id="object.delete" tData={{ object: "proxy-host" }} />,
-							onConfirm: () => handleDelete(id),
-							invalidations: [["proxy-hosts"], ["proxy-host", id]],
-							children: (
-								<>
-									<T id="object.delete.content" tData={{ object: "proxy-host" }} />
-									{host?.domainNames?.length ? (
-										<div className="mt-2 fw-bold text-break">{host.domainNames.join(", ")}</div>
-									) : null}
-									{host?.forwardHost ? (
-										<div className="mt-1 text-muted small">
-											({host.forwardScheme}://{host.forwardHost}:{host.forwardPort})
-										</div>
-									) : null}
-								</>
-							),
-						});
-					}}
-					onDisableToggle={handleDisableToggle}
-					onNew={() => showProxyHostModal("new")}
-				/>
+				{content}
 			</div>
 		</div>
 	);

@@ -1,9 +1,10 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconList, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import type { DeadHost } from "src/api/backend";
 import { deleteDeadHost, toggleDeadHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
 import { useDeadHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeadHostModal, showDeleteConfirmModal, showHelpModal } from "src/modals";
@@ -15,14 +16,6 @@ export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 	const { isFetching, isLoading, isError, error, data } = useDeadHosts(["owner", "certificate"]);
-
-	if (isLoading) {
-		return <LoadingPage />;
-	}
-
-	if (isError) {
-		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
-	}
 
 	const handleDelete = async (id: number) => {
 		await deleteDeadHost(id);
@@ -36,6 +29,15 @@ export default function TableWrapper() {
 		showObjectSuccess("dead-host", enabled ? "enabled" : "disabled");
 	};
 
+	const handleEdit = (id: number) => showDeadHostModal(id);
+	const handleDeleteConfirm = (id: number) =>
+		showDeleteConfirmModal({
+			title: <T id="object.delete" tData={{ object: "dead-host" }} />,
+			onConfirm: () => handleDelete(id),
+			invalidations: [["dead-hosts"], ["dead-host", id]],
+			children: <T id="object.delete.content" tData={{ object: "dead-host" }} />,
+		});
+
 	let filtered = null;
 	if (search && data) {
 		filtered = data?.filter((item) => {
@@ -44,6 +46,35 @@ export default function TableWrapper() {
 	} else if (search !== "") {
 		// this can happen if someone deletes the last item while searching
 		setSearch("");
+	}
+
+	const rows = filtered ?? data ?? [];
+
+	const flatView: ViewDefinition<DeadHost> = {
+		id: "flat",
+		label: "view.flat",
+		icon: <IconList size={18} />,
+		render: ({ data }) => (
+			<Table
+				data={data}
+				isFiltered={!!search}
+				isFetching={isFetching}
+				onEdit={handleEdit}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+				onNew={() => showDeadHostModal("new")}
+			/>
+		),
+	};
+
+	const { controls, content } = useDataView({ screenKey: "dead-hosts", data: rows, views: [flatView] });
+
+	if (isLoading) {
+		return <LoadingPage />;
+	}
+
+	if (isError) {
+		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
 	}
 
 	return (
@@ -60,6 +91,7 @@ export default function TableWrapper() {
 
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? controls : null}
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -88,22 +120,7 @@ export default function TableWrapper() {
 						</div>
 					</div>
 				</div>
-				<Table
-					data={filtered ?? data ?? []}
-					isFiltered={!!search}
-					isFetching={isFetching}
-					onEdit={(id: number) => showDeadHostModal(id)}
-					onDelete={(id: number) =>
-						showDeleteConfirmModal({
-							title: <T id="object.delete" tData={{ object: "dead-host" }} />,
-							onConfirm: () => handleDelete(id),
-							invalidations: [["dead-hosts"], ["dead-host", id]],
-							children: <T id="object.delete.content" tData={{ object: "dead-host" }} />,
-						})
-					}
-					onDisableToggle={handleDisableToggle}
-					onNew={() => showDeadHostModal("new")}
-				/>
+				{content}
 			</div>
 		</div>
 	);

@@ -1,4 +1,3 @@
-import { IconDotsVertical, IconEdit, IconPower, IconTrash } from "@tabler/icons-react";
 import { createColumnHelper, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { useMemo } from "react";
 import type { DeadHost } from "src/api/backend";
@@ -7,12 +6,12 @@ import {
 	DomainsFormatter,
 	EmptyData,
 	GravatarFormatter,
-	HasPermission,
+	HostActionsDropdown,
 	StatusFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
-import { intl, T } from "src/locale";
-import { DEAD_HOSTS, MANAGE } from "src/modules/Permissions";
+import { intl } from "src/locale";
+import { DEAD_HOSTS } from "src/modules/Permissions";
 
 interface Props {
 	data: DeadHost[];
@@ -83,65 +82,17 @@ export default function Table({ data, isFetching, onEdit, onDelete, onDisableTog
 			}),
 			columnHelper.display({
 				id: "actions",
-				cell: (info: any) => {
-					return (
-						<span className="dropdown">
-							<button
-								type="button"
-								className="btn dropdown-toggle btn-action btn-sm px-1"
-								data-bs-boundary="viewport"
-								data-bs-toggle="dropdown"
-							>
-								<IconDotsVertical />
-							</button>
-							<div className="dropdown-menu dropdown-menu-end">
-								<span className="dropdown-header">
-									<T
-										id="object.actions-title"
-										tData={{ object: "dead-host" }}
-										data={{ id: info.row.original.id }}
-									/>
-								</span>
-								<a
-									className="dropdown-item"
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										onEdit?.(info.row.original.id);
-									}}
-								>
-									<IconEdit size={16} />
-									<T id="action.edit" />
-								</a>
-								<HasPermission section={DEAD_HOSTS} permission={MANAGE} hideError>
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onDisableToggle?.(info.row.original.id, !info.row.original.enabled);
-										}}
-									>
-										<IconPower size={16} />
-										<T id={info.row.original.enabled ? "action.disable" : "action.enable"} />
-									</a>
-									<div className="dropdown-divider" />
-									<a
-										className="dropdown-item"
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											onDelete?.(info.row.original.id);
-										}}
-									>
-										<IconTrash size={16} />
-										<T id="action.delete" />
-									</a>
-								</HasPermission>
-							</div>
-						</span>
-					);
-				},
+				cell: (info: any) => (
+					<HostActionsDropdown
+						object="dead-host"
+						id={info.row.original.id}
+						enabled={info.row.original.enabled}
+						permissionSection={DEAD_HOSTS}
+						onEdit={onEdit}
+						onDelete={onDelete}
+						onDisableToggle={onDisableToggle}
+					/>
+				),
 				meta: {
 					className: "text-end w-1",
 				},

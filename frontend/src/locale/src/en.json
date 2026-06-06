@@ -871,5 +871,14 @@
 	},
 	"users": {
 		"defaultMessage": "Users"
+	},
+	"view.flat": {
+		"defaultMessage": "Flat list"
+	},
+	"view.label": {
+		"defaultMessage": "View"
+	},
+	"view.settings": {
+		"defaultMessage": "View settings"
 	}
 }

@@ -1,9 +1,10 @@
-import { IconHelp, IconSearch } from "@tabler/icons-react";
+import { IconHelp, IconList, IconSearch } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import type { Stream } from "src/api/backend";
 import { deleteStream, toggleStream } from "src/api/backend";
-import { Button, HasPermission, LoadingPage } from "src/components";
+import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
 import { useStreams } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showStreamModal } from "src/modals";
@@ -14,16 +15,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
-	const [_deleteId, _setDeleteIdd] = useState(0);
 	const { isFetching, isLoading, isError, error, data } = useStreams(["owner", "certificate"]);
-
-	if (isLoading) {
-		return <LoadingPage />;
-	}
-
-	if (isError) {
-		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
-	}
 
 	const handleDelete = async (id: number) => {
 		await deleteStream(id);
@@ -36,6 +28,15 @@ export default function TableWrapper() {
 		queryClient.invalidateQueries({ queryKey: ["stream", id] });
 		showObjectSuccess("stream", enabled ? "enabled" : "disabled");
 	};
+
+	const handleEdit = (id: number) => showStreamModal(id);
+	const handleDeleteConfirm = (id: number) =>
+		showDeleteConfirmModal({
+			title: <T id="object.delete" tData={{ object: "stream" }} />,
+			onConfirm: () => handleDelete(id),
+			invalidations: [["streams"], ["stream", id]],
+			children: <T id="object.delete.content" tData={{ object: "stream" }} />,
+		});
 
 	let filtered = null;
 	if (search && data) {
@@ -52,6 +53,35 @@ export default function TableWrapper() {
 		setSearch("");
 	}
 
+	const rows = filtered ?? data ?? [];
+
+	const flatView: ViewDefinition<Stream> = {
+		id: "flat",
+		label: "view.flat",
+		icon: <IconList size={18} />,
+		render: ({ data }) => (
+			<Table
+				data={data}
+				isFiltered={!!search}
+				isFetching={isFetching}
+				onEdit={handleEdit}
+				onDelete={handleDeleteConfirm}
+				onDisableToggle={handleDisableToggle}
+				onNew={() => showStreamModal("new")}
+			/>
+		),
+	};
+
+	const { controls, content } = useDataView({ screenKey: "streams", data: rows, views: [flatView] });
+
+	if (isLoading) {
+		return <LoadingPage />;
+	}
+
+	if (isError) {
+		return <Alert variant="danger">{error?.message || "Unknown error"}</Alert>;
+	}
+
 	return (
 		<div className="card mt-4">
 			<div className="card-status-top bg-blue" />
@@ -65,6 +95,7 @@ export default function TableWrapper() {
 						</div>
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
+								{data?.length ? controls : null}
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -93,22 +124,7 @@ export default function TableWrapper() {
 						</div>
 					</div>
 				</div>
-				<Table
-					data={filtered ?? data ?? []}
-					isFetching={isFetching}
-					isFiltered={!!filtered}
-					onEdit={(id: number) => showStreamModal(id)}
-					onDelete={(id: number) =>
-						showDeleteConfirmModal({
-							title: <T id="object.delete" tData={{ object: "stream" }} />,
-							onConfirm: () => handleDelete(id),
-							invalidations: [["streams"], ["stream", id]],
-							children: <T id="object.delete.content" tData={{ object: "stream" }} />,
-						})
-					}
-					onDisableToggle={handleDisableToggle}
-					onNew={() => showStreamModal("new")}
-				/>
+				{content}
 			</div>
 		</div>
 	);
