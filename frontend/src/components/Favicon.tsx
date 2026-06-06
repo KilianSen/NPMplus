@@ -19,7 +19,9 @@ export function faviconDomain(domains: string[] | undefined): string | null {
 	return null;
 }
 
-const faviconUrl = (domain: string) => `https://${domain}/favicon.ico`;
+// Served same-origin by the backend (which caches the remote favicon); a direct
+// cross-origin https://<domain>/favicon.ico is blocked by the app's img-src CSP.
+const faviconUrl = (domain: string) => `/api/favicon/${encodeURIComponent(domain)}`;
 
 /**
  * Owner-column icon: shows the host's site favicon when `favicon` is set, falling

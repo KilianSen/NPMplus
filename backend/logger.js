@@ -16,6 +16,7 @@ const setup = new signale.Signale({ scope: "Setup         ", ...opts });
 const ipRanges = new signale.Signale({ scope: "IP Ranges     ", ...opts });
 const remoteVersion = new signale.Signale({ scope: "Remote Version", ...opts });
 const gravatar = new signale.Signale({ scope: "Gravatar      ", ...opts });
+const favicon = new signale.Signale({ scope: "Favicon       ", ...opts });
 const oidc = new signale.Signale({ scope: "OIDC          ", ...opts });
 
 const debug = (logger, ...args) => {
@@ -36,5 +37,6 @@ export {
 	ipRanges,
 	remoteVersion,
 	gravatar,
+	favicon,
 	oidc,
 };
