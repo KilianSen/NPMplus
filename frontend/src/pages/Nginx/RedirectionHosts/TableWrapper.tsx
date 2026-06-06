@@ -4,7 +4,15 @@ import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 import type { RedirectionHost } from "src/api/backend";
 import { deleteRedirectionHost, toggleRedirectionHost } from "src/api/backend";
-import { Button, HasPermission, LoadingPage, useDataView, type ViewDefinition } from "src/components";
+import {
+	Button,
+	FaviconSettingsControl,
+	HasPermission,
+	LoadingPage,
+	useDataView,
+	useFaviconSettings,
+	type ViewDefinition,
+} from "src/components";
 import { useRedirectionHosts } from "src/hooks";
 import { T } from "src/locale";
 import { showDeleteConfirmModal, showHelpModal, showRedirectionHostModal } from "src/modals";
@@ -15,6 +23,7 @@ import Table from "./Table";
 export default function TableWrapper() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
+	const [faviconSettings, setFaviconSettings] = useFaviconSettings("redirection-hosts");
 	const { isFetching, isLoading, isError, error, data } = useRedirectionHosts(["owner", "certificate"]);
 
 	const handleDelete = async (id: number) => {
@@ -66,6 +75,8 @@ export default function TableWrapper() {
 				onDelete={handleDeleteConfirm}
 				onDisableToggle={handleDisableToggle}
 				onNew={() => showRedirectionHostModal("new")}
+				showOwnerFavicon={faviconSettings.ownerFavicon}
+				showDomainFavicon={faviconSettings.domainFavicon}
 			/>
 		),
 	};
@@ -94,6 +105,9 @@ export default function TableWrapper() {
 						<div className="col-md-auto col-sm-12">
 							<div className="ms-auto d-flex flex-wrap btn-list">
 								{data?.length ? controls : null}
+								{data?.length ? (
+									<FaviconSettingsControl settings={faviconSettings} onChange={setFaviconSettings} />
+								) : null}
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">

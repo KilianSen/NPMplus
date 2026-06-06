@@ -1,5 +1,6 @@
 import cn from "classnames";
 import type { ReactNode } from "react";
+import { InlineFavicon } from "src/components/Favicon";
 import { useLocaleState } from "src/context";
 import { formatDateTime, T } from "src/locale";
 
@@ -9,9 +10,10 @@ interface Props {
 	niceName?: string;
 	provider?: string;
 	color?: string;
+	showFavicon?: boolean;
 }
 
-const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
+const DomainLink = ({ domain, color, showFavicon }: { domain?: string; color?: string; showFavicon?: boolean }) => {
 	// when domain contains a wildcard, make the link go nowhere.
 	// Apparently the domain can be null or undefined sometimes.
 	// This try is just a safeguard to prevent the whole formatter from breaking.
@@ -30,6 +32,7 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 				onClick={onClick}
 				className={cn("badge", color ? `bg-${color}-lt` : null, "domain-name", "me-2")}
 			>
+				{showFavicon ? <InlineFavicon domain={domain} /> : null}
 				{domain}
 			</a>
 		);
@@ -38,7 +41,7 @@ const DomainLink = ({ domain, color }: { domain?: string; color?: string }) => {
 	}
 };
 
-export function DomainsFormatter({ domains, createdOn, niceName, provider, color }: Props) {
+export function DomainsFormatter({ domains, createdOn, niceName, provider, color, showFavicon }: Props) {
 	const { locale } = useLocaleState();
 	const elms: ReactNode[] = [];
 
@@ -58,7 +61,9 @@ export function DomainsFormatter({ domains, createdOn, niceName, provider, color
 	}
 
 	if (domains) {
-		domains.map((domain: string) => elms.push(<DomainLink key={domain} domain={domain} color={color} />));
+		domains.map((domain: string) =>
+			elms.push(<DomainLink key={domain} domain={domain} color={color} showFavicon={showFavicon} />),
+		);
 	}
 
 	return (

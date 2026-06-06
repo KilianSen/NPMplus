@@ -6,8 +6,9 @@ import {
 	CertificateFormatter,
 	DomainsFormatter,
 	EmptyData,
-	GravatarFormatter,
+	faviconDomain,
 	HostActionsDropdown,
+	OwnerAvatar,
 	StatusFormatter,
 } from "src/components";
 import { TableLayout } from "src/components/Table/TableLayout";
@@ -23,6 +24,8 @@ interface Props {
 	onDelete?: (id: number) => void;
 	onDisableToggle?: (id: number, enabled: boolean) => void;
 	onNew?: () => void;
+	showOwnerFavicon?: boolean;
+	showDomainFavicon?: boolean;
 }
 export default function Table({
 	data,
@@ -33,6 +36,8 @@ export default function Table({
 	onDisableToggle,
 	onNew,
 	isFiltered,
+	showOwnerFavicon,
+	showDomainFavicon,
 }: Props) {
 	const columnHelper = createColumnHelper<ProxyHost>();
 	const columns = useMemo(
@@ -41,7 +46,13 @@ export default function Table({
 				id: "owner",
 				cell: (info: any) => {
 					const value = info.row.original.owner;
-					return <GravatarFormatter url={value ? value.avatar : ""} name={value ? value.name : ""} />;
+					return (
+						<OwnerAvatar
+							favicon={showOwnerFavicon ? faviconDomain(info.row.original.domainNames) : null}
+							avatarUrl={value?.avatar}
+							name={value?.name}
+						/>
+					);
 				},
 				meta: {
 					className: "w-1",
@@ -52,7 +63,13 @@ export default function Table({
 				header: intl.formatMessage({ id: "column.source" }),
 				cell: (info: any) => {
 					const value = info.row.original;
-					return <DomainsFormatter domains={value.domainNames} createdOn={value.createdOn} />;
+					return (
+						<DomainsFormatter
+							domains={value.domainNames}
+							createdOn={value.createdOn}
+							showFavicon={showDomainFavicon}
+						/>
+					);
 				},
 			}),
 			columnHelper.accessor(
@@ -151,7 +168,7 @@ export default function Table({
 				},
 			}),
 		],
-		[columnHelper, onEdit, onClone, onDisableToggle, onDelete],
+		[columnHelper, onEdit, onClone, onDisableToggle, onDelete, showOwnerFavicon, showDomainFavicon],
 	);
 
 	const tableInstance = useReactTable<ProxyHost>({

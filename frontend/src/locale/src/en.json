@@ -449,6 +449,15 @@
 	"expires.on": {
 		"defaultMessage": "Expires: {date}"
 	},
+	"favicon.domains": {
+		"defaultMessage": "Favicon next to domains"
+	},
+	"favicon.owner": {
+		"defaultMessage": "Use site favicon for owner"
+	},
+	"favicon.settings": {
+		"defaultMessage": "Favicon options"
+	},
 	"footer.github": {
 		"defaultMessage": "Repo on Github"
 	},

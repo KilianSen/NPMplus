@@ -2,6 +2,7 @@ export * from "./Button";
 export * from "./DataView";
 export * from "./EmptyData";
 export * from "./ErrorNotFound";
+export * from "./Favicon";
 export * from "./Flag";
 export * from "./Form";
 export * from "./HasPermission";
