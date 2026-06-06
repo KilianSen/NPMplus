@@ -1,0 +1,17 @@
+# Dev image: start from the released NPMplus image (which already contains the
+# heavy compiled nginx + certbot + lua), and reinstall the BACKEND dependencies
+# for the current source branch. This avoids the slow from-scratch nginx build
+# while keeping node_modules in sync with backend/package.json on `develop`.
+#
+# Used by compose.dev.yaml. Rebuild it after changing backend dependencies:
+#   docker compose -f compose.dev.yaml up -d --build
+FROM docker.io/zoeyvid/npmplus:latest
+
+WORKDIR /app
+
+# pnpm + toolchain to (re)compile native modules (e.g. better-sqlite3) for musl.
+RUN apk add --no-cache pnpm make g++ gcc python3
+
+# Install only the dependencies first for better layer caching.
+COPY backend/package.json backend/pnpm-lock.yaml backend/pnpm-workspace.yaml /app/
+RUN pnpm install --prod --frozen-lockfile && pnpm store prune

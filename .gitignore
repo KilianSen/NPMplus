@@ -6,3 +6,7 @@
 certbot-help.txt
 */node_modules
 .claude
+
+# local dev environment (compose.dev.yaml)
+/data
+frontend/.dev-cert
