@@ -25,6 +25,20 @@ export interface User {
 	permissions?: UserPermissions;
 }
 
+export interface ApiToken {
+	id: number;
+	createdOn: string;
+	modifiedOn: string;
+	userId: number;
+	name: string;
+	prefix: string;
+	expiresOn: string | null;
+	lastUsedOn: string | null;
+	isDeleted?: boolean;
+	// Only present in the response to a create call:
+	secret?: string;
+}
+
 export interface AuditLog {
 	id: number;
 	createdOn: string;

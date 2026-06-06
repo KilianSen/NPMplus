@@ -1,0 +1,52 @@
+{
+	"operationId": "createApiToken",
+	"summary": "Create a new API token. The plaintext secret is returned only once.",
+	"tags": ["api-tokens"],
+	"security": [
+		{
+			"cookieAuth": ["user"]
+		},
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"requestBody": {
+		"description": "API Token Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": ["name"],
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255,
+							"example": "My SDK token"
+						},
+						"expiry": {
+							"type": "string",
+							"description": "Date period expression such as 30d, 6M or 1y. Omit for a token that never expires.",
+							"pattern": "^([0-9]+)(y|Q|M|w|d|h|m|s|ms)$",
+							"example": "90d"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "201 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../components/api-token-object.json"
+					}
+				}
+			}
+		}
+	}
+}

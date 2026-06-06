@@ -1,4 +1,5 @@
 export * from "./AccessListModal";
+export * from "./ApiTokenModal";
 export * from "./ChangePasswordModal";
 export * from "./CustomCertificateModal";
 export * from "./DeadHostModal";
@@ -9,8 +10,8 @@ export * from "./HelpModal";
 export * from "./HTTPCertificateModal";
 export * from "./PermissionsModal";
 export * from "./ProxyHostModal";
-export * from "./RedirectionHostModal";
 export * from "./ReachabilityModal";
+export * from "./RedirectionHostModal";
 export * from "./RenewCertificateModal";
 export * from "./SetPasswordModal";
 export * from "./StreamModal";

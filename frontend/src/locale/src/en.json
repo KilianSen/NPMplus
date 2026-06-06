@@ -146,6 +146,63 @@
 	"action.view-details": {
 		"defaultMessage": "View Details"
 	},
+	"api-token": {
+		"defaultMessage": "API Token"
+	},
+	"api-token.copied": {
+		"defaultMessage": "Token copied to clipboard"
+	},
+	"api-token.copy-failed": {
+		"defaultMessage": "Could not copy to clipboard"
+	},
+	"api-token.create": {
+		"defaultMessage": "Create token"
+	},
+	"api-token.created-title": {
+		"defaultMessage": "Save your API token"
+	},
+	"api-token.done": {
+		"defaultMessage": "Done"
+	},
+	"api-token.expiry": {
+		"defaultMessage": "Expiry"
+	},
+	"api-token.expiry-1y": {
+		"defaultMessage": "1 year"
+	},
+	"api-token.expiry-30d": {
+		"defaultMessage": "30 days"
+	},
+	"api-token.expiry-7d": {
+		"defaultMessage": "7 days"
+	},
+	"api-token.expiry-90d": {
+		"defaultMessage": "90 days"
+	},
+	"api-token.expiry-never": {
+		"defaultMessage": "Never"
+	},
+	"api-token.intro": {
+		"defaultMessage": "Use API tokens to authenticate the SDK and other external clients. Send the token in an Authorization: Bearer header."
+	},
+	"api-token.name": {
+		"defaultMessage": "Name"
+	},
+	"api-token.never-used": {
+		"defaultMessage": "Never"
+	},
+	"api-token.revoke": {
+		"defaultMessage": "Revoke token"
+	},
+	"api-token.revoke.content": {
+		"defaultMessage": "Are you sure you want to revoke this token? Any client using it will immediately lose access."
+	},
+	"api-token.secret-warning": {
+		"defaultMessage": "This is the only time the token will be shown. Copy it now and store it somewhere safe."
+	},
+	"api-tokens": {
+		"defaultMessage": "API Tokens"
+	},
 	"auditlogs": {
 		"defaultMessage": "Audit Logs"
 	},
@@ -269,6 +326,9 @@
 	"column.authorizations": {
 		"defaultMessage": "Authorizations"
 	},
+	"column.created": {
+		"defaultMessage": "Created"
+	},
 	"column.custom-locations": {
 		"defaultMessage": "Custom Locations"
 	},
@@ -295,6 +355,9 @@
 	},
 	"column.incoming-port": {
 		"defaultMessage": "Incoming Port"
+	},
+	"column.last-used": {
+		"defaultMessage": "Last used"
 	},
 	"column.name": {
 		"defaultMessage": "Name"
@@ -331,6 +394,12 @@
 	},
 	"column.status": {
 		"defaultMessage": "Status"
+	},
+	"column.token": {
+		"defaultMessage": "Token"
+	},
+	"copy": {
+		"defaultMessage": "Copy"
 	},
 	"created-on": {
 		"defaultMessage": "Created: {date}"
@@ -571,6 +640,9 @@
 	},
 	"notification.error": {
 		"defaultMessage": "Error"
+	},
+	"notification.object-created": {
+		"defaultMessage": "{object} has been created"
 	},
 	"notification.object-deleted": {
 		"defaultMessage": "{object} has been deleted"

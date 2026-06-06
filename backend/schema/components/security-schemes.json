@@ -3,5 +3,10 @@
 		"type": "apiKey",
 		"in": "cookie",
 		"name": "token"
+	},
+	"bearerAuth": {
+		"type": "http",
+		"scheme": "bearer",
+		"description": "Opaque API token issued from the API Tokens page, sent as `Authorization: Bearer npmplus_...`"
 	}
 }

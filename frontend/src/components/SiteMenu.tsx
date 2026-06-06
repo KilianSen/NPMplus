@@ -2,6 +2,7 @@ import {
 	IconBook,
 	IconDeviceDesktop,
 	IconHome,
+	IconKey,
 	IconLock,
 	IconSettings,
 	IconShield,
@@ -94,6 +95,11 @@ const menuItems: MenuItem[] = [
 		icon: IconBook,
 		label: "auditlogs",
 		permissionSection: ADMIN,
+	},
+	{
+		to: "/api-tokens",
+		icon: IconKey,
+		label: "api-tokens",
 	},
 	{
 		to: "/settings",

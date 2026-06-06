@@ -1,0 +1,43 @@
+{
+	"operationId": "deleteApiToken",
+	"summary": "Revoke (delete) an API token",
+	"tags": ["api-tokens"],
+	"security": [
+		{
+			"cookieAuth": ["user"]
+		},
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "tokenID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "API Token ID",
+			"example": 1
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"examples": {
+						"default": {
+							"value": true
+						}
+					},
+					"schema": {
+						"type": "boolean"
+					}
+				}
+			}
+		}
+	}
+}

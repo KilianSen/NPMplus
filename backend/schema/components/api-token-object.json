@@ -1,0 +1,56 @@
+{
+	"type": "object",
+	"description": "API Token object",
+	"additionalProperties": false,
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"created_on": {
+			"type": "string",
+			"description": "Created Date ISO Time String",
+			"example": "2025-02-04T20:40:46.000Z"
+		},
+		"modified_on": {
+			"type": "string",
+			"description": "Modified Date ISO Time String",
+			"example": "2025-02-04T20:40:46.000Z"
+		},
+		"user_id": {
+			"type": "integer",
+			"minimum": 1,
+			"example": 1
+		},
+		"name": {
+			"type": "string",
+			"description": "Human readable name for the token",
+			"example": "My SDK token"
+		},
+		"prefix": {
+			"type": "string",
+			"description": "First characters of the secret, for display only",
+			"example": "npmplus_AbC123"
+		},
+		"expires_on": {
+			"type": ["string", "null"],
+			"description": "Expiry Date ISO Time String, or null if the token never expires",
+			"example": "2026-02-04T20:40:46.000Z"
+		},
+		"last_used_on": {
+			"type": ["string", "null"],
+			"description": "Last Used Date ISO Time String, or null if never used",
+			"example": "2025-02-04T20:40:46.000Z"
+		},
+		"is_deleted": {
+			"type": "boolean",
+			"example": false
+		},
+		"secret": {
+			"type": "string",
+			"description": "The plaintext secret. Returned ONLY once, at creation time.",
+			"example": "npmplus_AbC123xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+		}
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"operationId": "getApiTokens",
+	"summary": "Get all API tokens for the current user",
+	"tags": ["api-tokens"],
+	"security": [
+		{
+			"cookieAuth": ["user"]
+		},
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"$ref": "../../components/api-token-object.json"
+						}
+					}
+				}
+			}
+		}
+	}
+}

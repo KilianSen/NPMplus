@@ -1,0 +1,64 @@
+{
+	"operationId": "updateApiToken",
+	"summary": "Rename an API token or change its expiry",
+	"tags": ["api-tokens"],
+	"security": [
+		{
+			"cookieAuth": ["user"]
+		},
+		{
+			"bearerAuth": ["user"]
+		}
+	],
+	"parameters": [
+		{
+			"in": "path",
+			"name": "tokenID",
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			},
+			"required": true,
+			"description": "API Token ID",
+			"example": 1
+		}
+	],
+	"requestBody": {
+		"description": "API Token Payload",
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"minProperties": 1,
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 255,
+							"example": "My renamed token"
+						},
+						"expiry": {
+							"type": ["string", "null"],
+							"description": "Date period expression such as 30d, or null to remove the expiry.",
+							"example": "1y"
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "200 response",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/api-token-object.json"
+					}
+				}
+			}
+		}
+	}
+}

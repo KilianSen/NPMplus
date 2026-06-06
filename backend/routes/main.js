@@ -2,6 +2,7 @@ import express from "express";
 import errs from "../lib/error.js";
 import pjson from "../package.json" with { type: "json" };
 import { isSetup } from "../setup.js";
+import apiTokensRoutes from "./api-tokens.js";
 import auditLogRoutes from "./audit-log.js";
 import accessListsRoutes from "./nginx/access_lists.js";
 import certificatesHostsRoutes from "./nginx/certificates.js";
@@ -48,6 +49,7 @@ router.get(["/api", "/api/"], async (_, res /*, next*/) => {
 router.use("/api/docs", docsRoutes);
 router.use("/api/schema", schemaRoutes);
 router.use("/api/tokens", tokensRoutes);
+router.use("/api/api-tokens", apiTokensRoutes);
 if (isOIDCenabled) router.use("/api/oidc", oidcRoutes);
 router.use("/api/users", usersRoutes);
 router.use("/api/audit-log", auditLogRoutes);

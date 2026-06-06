@@ -285,6 +285,22 @@
 				"$ref": "./paths/settings/settingID/put.json"
 			}
 		},
+		"/api-tokens": {
+			"get": {
+				"$ref": "./paths/api-tokens/get.json"
+			},
+			"post": {
+				"$ref": "./paths/api-tokens/post.json"
+			}
+		},
+		"/api-tokens/{tokenID}": {
+			"put": {
+				"$ref": "./paths/api-tokens/tokenID/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/api-tokens/tokenID/delete.json"
+			}
+		},
 		"/tokens": {
 			"get": {
 				"$ref": "./paths/tokens/get.json"
