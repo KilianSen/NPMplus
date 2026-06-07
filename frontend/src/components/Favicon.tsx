@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "./Favicon.module.css";
 
 const defaultAvatar = "/images/default-avatar.jpg";
 
@@ -43,7 +44,7 @@ export function OwnerAvatar({
 		<div className="d-flex py-1 align-items-center">
 			{showFavicon ? (
 				<img
-					className="avatar avatar-2 me-2"
+					className={`avatar avatar-2 me-2 ${styles.ownerFavicon}`}
 					src={faviconUrl(favicon)}
 					alt=""
 					title={name}
@@ -73,8 +74,7 @@ export function InlineFavicon({ domain }: { domain: string }) {
 			alt=""
 			width={16}
 			height={16}
-			className="me-1"
-			style={{ verticalAlign: "text-bottom", objectFit: "contain" }}
+			className={`me-1 ${styles.inlineFavicon}`}
 			onError={() => setFailed(true)}
 		/>
 	);

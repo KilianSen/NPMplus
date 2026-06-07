@@ -1,0 +1,16 @@
+/* Owner-column favicon. The avatar sits in a `d-flex` inside a compressed `w-1`
+   table cell. Reboot's `img { max-width: 100% }` lets the column squeeze the image
+   width down to the cell (height stays fixed), so it renders narrow/tiny. Pin the
+   width to the square avatar size and lift the max-width cap; fit the whole logo in. */
+.ownerFavicon {
+	flex-shrink: 0;
+	min-width: var(--tblr-avatar-size);
+	max-width: none;
+	object-fit: contain;
+}
+
+/* Inline favicon shown next to a domain name. */
+.inlineFavicon {
+	vertical-align: text-bottom;
+	object-fit: contain;
+}
